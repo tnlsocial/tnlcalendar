@@ -5,9 +5,9 @@ A Flask site where you can share a calendar
 
 Uncomment the sqlite database file
 ```python
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/tnlrecepten/db/recepten.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/tnlcalendar/db/calendar.db'
 # Local development
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///recepten.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///calendar.db'
 ```
 
 Create a new virtualenv
