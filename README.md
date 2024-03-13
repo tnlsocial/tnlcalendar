@@ -1,5 +1,5 @@
 # tnlcalender
-A Flask site where you can share a calendar
+A Flask site where you can share a calendar with others
 
 ## Development
 
