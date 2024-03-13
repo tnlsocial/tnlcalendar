@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang=en>
+  <head>
+    <title>#tnl auth</title>
+    <link rel=preconnect href=https://fonts.googleapis.com>
+    <link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel=stylesheet>
+    <style>
+      html, body { margin: 0; padding: 0; height: 100%; }
+      body       { display: flex; justify-content: space-around; align-items: center; font-family: 'Assistant', sans-serif; font-weight: 400; }
+      textarea   { font-family: inherit; font-size: inherit; background: #dedede; border: none; resize: none; width: 100%; }
+      #app       { max-width: 100%; width: 500px; padding: 30px; border: 1px solid #dedede; border-radius: 20px; margin-bottom: 30px; }
+      #where     { font-weight: 700; }
+      .shy       { color: gray; }
+    </style>
+  </head>
+  <body>
+    <div id=app>
+      <div id=main>
+        <p><b>This site</b> uses #tnl authentication</p>
+        <p>To authenticate, please visit <a href="https://refre.in/?next={{ current_url}}">https://refre.in/?next={{ current_url}}</a></p>
+      </div>
+    </div>
+  </body>
+</html>

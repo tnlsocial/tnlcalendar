@@ -1,0 +1,53 @@
+body {
+	max-width: 800px;
+	margin: auto ;
+	padding: 0 16px ;
+  	font-family: Georgia, 'Times New Roman', Times, serif;
+	background-color: #fffaf0;
+}
+
+a {
+	color: black;
+}
+
+@media (min-width: 100em) {
+	#recepten { column-count: 3 ;}
+}
+
+@media (min-width: 55em) {
+	#artlist { column-count: 2 ;}
+}
+
+:root {
+  --fc-border-color: black;
+  --fc-daygrid-event-dot-width: 2.5px;
+  --fc-button-bg-color: #000;
+}
+
+/*
+.filled{
+    background-color: pink;
+}
+.today {
+    background-color: #66ccff;
+}
+.noday{
+    background-color: #f0f0f5;
+}
+.month {
+    border:1px solid navy;
+    width: 70%;
+    text-align: center;
+}
+.month th {
+    text-align: center;
+    width:100px;
+    height:20px;
+}
+.month td {
+    width: 100px;
+    height: 100px;
+    vertical-align: top;
+    text-align: right;
+    border: 1px solid #c6c6ec;
+} */

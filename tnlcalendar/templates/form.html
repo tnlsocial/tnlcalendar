@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_field %}
+{% block content %}
+{% if request.url_rule.endpoint == 'toevoegen' %}
+<p class="position-absolute top-0 start-0"><a href="{{ url_for('index') }}">Startpagina</a></p>
+<br>
+<center class="text-break"><h1>Toevoegen aan de kalender</h1></center>
+<form method="POST" action="/toevoegen">
+  <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+  <div class="mb-3">
+    <label for="nickname">Nickname</label>
+    <input class="form-control" id="nickname" name="nickname" readonly type="text" value="{{ nickname }}">
+  </div>
+
+  <div class="mb-3">
+    <label for="titel">Titel</label>
+    <input class="form-control" id="titel" name="titel" required type="text" value="">
+  </div>
+  <div class="mb-3">
+    <label for="event">Event</label>
+    <textarea class="form-control" required rows="20" cols="20" id="event" name="event" placeholder="Je kunt markdown gebruiken in dit veld, een snelle opfriscursus:
+    # h1 Heading
+    ## h2 Heading
+    **This is bold text**
+    __This is bold text__
+    *This is italic text*
+    _This is italic text_
+    ~~Strikethrough~~
+    + Create a list by starting a line with `+`, `-`, or `*`
+    + Sub-lists are made by indenting 2 spaces:
+      - Marker character change forces new list start:
+    * Ac tristique libero volutpat at
+    + Facilisis in pretium nisl aliquet
+    - Nulla volutpat aliquam velit"></textarea>
+  </div>
+  <div class="mb-3">
+    <label for="start_date">Startdatum</label>
+    <input class="form-control" id="start_date" name="start_date" required type="datetime-local" {% if start %}value="{{ start }}"{% else %}value="{{ start_date }}"{% endif %}>
+  </div>
+  <div class="mb-3">
+    <label for="end_date">Einddatum</label>
+    <input class="form-control" id="end_date" name="end_date" type="datetime-local" {% if end %}value="{{ end }}"{% else %}value="{{ end_date }}"{% endif %}>
+  </div>
+  <div class="mb-3">
+    <input class="btn btn-primary btn-md" id="submit" name="submit" type="submit" value="Toevoegen">
+  </div>
+</form>
+{% elif request.url_rule.endpoint == 'aanpassen' %}
+<p class="position-absolute top-0 start-0"><a href="{{ url_for('index') }}">Startpagina</a></p><p class="position-absolute top-0 end-0"><a href="{{ url_for('aanpassen', event_id=event.id) }}?delete=True">Verwijderen</a></p>
+<br>
+<center class="text-break"><h1>Event aanpassen</h1></center>
+<form method="POST" action="/aanpassen/{{ event.id }}">
+  <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
+  <div class="mb-3">
+    <label for="nickname">Nickname</label>
+    <input class="form-control" id="nickname" name="nickname" readonly type="text" value="{{ event.nickname }}">
+  </div>
+
+  <div class="mb-3">
+    <label for="titel">Titel</label>
+    <input class="form-control" id="titel" name="titel" required type="text" value="{{ event.title }}">
+  </div>
+  <div class="mb-3">
+    <label for="event">Event</label>
+    <textarea class="form-control" required rows="20" cols="20" id="event" name="event" value="">{{ event.event }}</textarea>
+  </div>
+  <div class="mb-3">
+    <label for="start_date">Startdatum</label>
+    <input class="form-control" id="start_date" name="start_date" required type="datetime-local" value="{{ event.start_date }}">
+  </div>
+  <div class="mb-3">
+    <label for="end_date">Einddatum</label>
+    <input class="form-control" id="end_date" name="end_date" type="datetime-local" value="{{ event.end_date }}">
+  </div>
+  <div class="mb-3">
+    <input class="btn btn-primary btn-md" id="submit" name="submit" type="submit" value="Aanpassen">
+  </div>
+</form>
+{% endif %}
+{% endblock %}

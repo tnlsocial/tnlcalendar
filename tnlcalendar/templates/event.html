@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_field %}
+{% block content %}
+<script src="{{ url_for('static', filename='moment.js') }}"></script>
+<script>moment.locale(language='nl')</script>
+<p class="position-absolute top-0 start-0"><a href="{{ url_for('index') }}">Startpagina</a></p>
+{% if authenticated %}<p class="position-absolute top-0 end-0"><a href="{{ url_for('aanpassen', event_id=event.id) }}">Aanpassen</a></p>{% endif %}
+<br>
+<center class="text-break"><h1><a href="{{ url_for('event', event_id=event.id) }}">{{ event.title }}</a></h1></center>
+<center class="text-break"><b>Van:</b><span id="event-start">{{ event.start_date }}</span></center>
+<center class="text-break"><b>Tot:</b><span id="event-end">{{ event.end_date }}</span></center>
+<script>
+    moment.tz.setDefault('Europe/Amsterdam');
+    moment.locale('nl'); // set the desired locale
+    var start = moment.utc('{{ event.start_date }}', 'YYYY-MM-DD HH:mm:ss');
+    document.getElementById('event-start').textContent = start.local().format('LLLLL'); // set the formatted date/time string
+
+    var end = moment.utc('{{ event.end_date }}', 'YYYY-MM-DD HH:mm:ss');
+    document.getElementById('event-end').textContent = end.local().format('LLLLL'); // set the formatted date/time string
+</script>
+<br>
+<br>
+<p>{{ event.event |safe }}</p>
+<hr>
+<p>Toegevoegd door <b>{{ event.nickname }}</b></p>
+<p>{% if event.last_edit %}Voor het laatst aangepast op: {{ event.last_edit.strftime('%d-%m-%Y, %T') }}{% else %}Aangemaakt op: {{ event.time_created.strftime('%d-%m-%Y, %T') }}{% endif %}</p>
+</div>
+{% endblock %}
