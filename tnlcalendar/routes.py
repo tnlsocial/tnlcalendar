@@ -5,42 +5,21 @@ from datetime import datetime
 import bleach
 import markdown
 from flask import current_app as app
-from flask import render_template, abort, request, redirect, flash, url_for, send_from_directory, session, jsonify
+from flask import render_template, abort, request, redirect, flash, url_for, send_from_directory, jsonify
 from sqlalchemy import asc
 
 from . import db
-from .auth import refrein
 from .models import KalenderEvent
 from .util import validate_form
 
 
 @app.route("/", methods=["GET"])
 def index():
-    current_url = request.url.replace('http://', 'https://', 1)
-    auth = request.args.get('auth', None)
-
-    if auth:
-        if not refrein(auth):
-            return render_template('failure.html', msg="Your auth token did not verify"), 401
-
-    try:
-        cookie = session['name']
-    except:
-        cookie = False
-
-    if not cookie:
-        return render_template('auth.html', current_url=current_url), 401
-
     return render_template("index.html")
 
 
 @app.route('/calendar/events')
 def calendar_events():
-    try:
-        cookie = session['name']
-    except:
-        abort(401)
-
     if request.args.get('start') and request.args.get('end'):
         events = KalenderEvent.query.filter(KalenderEvent.start_date >= request.args.get('start')) \
             .filter(KalenderEvent.end_date <= request.args.get('end'))
@@ -79,32 +58,13 @@ def calendar_events_api(token):
         })
 
         return jsonify(calender_dict)
+    # Maybe return everything by default instead
     return 'bleep bloop'
 
 
 @app.route("/event/<event_id>", methods=["GET"])
 def event(event_id):
-    current_url = request.url.replace('http://', 'https://', 1)
-    auth = request.args.get('auth', None)
-
-    if auth:
-        if not refrein(auth):
-            return render_template('failure.html', msg="Your auth token did not verify"), 401
-
-    try:
-        cookie = session['name']
-    except:
-        cookie = False
-
-    if not cookie:
-        return render_template('auth.html', current_url=current_url), 401
-
     event = KalenderEvent.query.filter_by(id=event_id).first_or_404()
-
-    authenticated = False
-
-    if cookie == event.nickname:
-        authenticated = True
 
     allowed_tags = ['tbody', 'th', 'img', 'ins', 'mark', 'sup', 'dl', 'p', 'br', 'abbr', 'hr', 'strong', 'ul', 'li',
                     'ol', 'pre', 'code', 'thead', 'table', 'td', 'tr', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'em',
@@ -118,27 +78,11 @@ def event(event_id):
         event.event = bleach.clean(markdown.markdown(event.event, extensions=['extra', 'tables', 'nl2br']),
                                    tags=allowed_tags, attributes=allowed_attr)
 
-    return render_template("event.html", event=event, authenticated=authenticated)
+    return render_template("event.html", event=event)
 
 
 @app.route("/toevoegen", methods=["GET", "POST"])
 def toevoegen():
-    current_url = request.url.replace('http://', 'https://', 1)
-    auth = request.args.get('auth', None)
-
-    if auth:
-        if not refrein(auth):
-            return render_template('failure.html', msg="Your auth token did not verify"), 401
-
-    try:
-        cookie = session['name']
-    except:
-        cookie = False
-
-    if not cookie:
-        return render_template('auth.html', current_url=current_url), 401
-
-    nickname = cookie
     default_value = None
 
     start = request.args.get('start', None)
@@ -148,6 +92,7 @@ def toevoegen():
         if not validate_form(request.form):
             return redirect(url_for('toevoegen'))
 
+        nickname = request.form['nickname']
         titel = request.form['titel']
         event = request.form.get('event', default_value)
         start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%dT%H:%M')
@@ -161,7 +106,6 @@ def toevoegen():
                                  time_created=datetime.now(),
                                  )
 
-        print('adding to db')
         db.session.add(new_item)
         db.session.commit()
         flash("Dank! Je event is toegevoegd", "success")
@@ -169,7 +113,6 @@ def toevoegen():
 
     now = datetime.now()
     return render_template("form.html",
-                           nickname=nickname,
                            start=start,
                            end=end,
                            start_date=now.strftime('%Y-%m-%dT%H:%M'))
@@ -177,28 +120,9 @@ def toevoegen():
 
 @app.route("/aanpassen/<event_id>", methods=["GET", "POST"])
 def aanpassen(event_id=None):
-    current_url = request.url.replace('http://', 'https://', 1)
-    auth = request.args.get('auth', None)
     delete = request.args.get('delete', False)
-    if auth:
-        if not refrein(auth):
-            return render_template('failure.html', msg="Your auth token did not verify"), 401
-
-    try:
-        cookie = session['name']
-    except:
-        cookie = False
-
-    if not cookie:
-        return render_template('auth.html', current_url=current_url), 401
-
-    nickname = cookie
 
     event = KalenderEvent.query.filter_by(id=event_id).first_or_404()
-
-    if event.nickname != nickname:
-        flash("Dit event is niet van jou, helaas!", "warning")
-        return redirect(url_for('index'))
 
     default_value = None
 
@@ -210,6 +134,7 @@ def aanpassen(event_id=None):
         start_date = datetime.strptime(request.form['start_date'], '%Y-%m-%dT%H:%M')
         end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%dT%H:%M')
 
+        event.nickname = request.form['nickname']
         event.title = request.form['titel']
         event.event = request.form.get('event', default_value)
         event.start_date = start_date
@@ -217,7 +142,6 @@ def aanpassen(event_id=None):
         event.last_edit = datetime.now()
 
         try:
-            print('adding to db')
             db.session.commit()
             flash("Je event is aangepast!", "success")
             return redirect(url_for('index'))
@@ -236,7 +160,6 @@ def aanpassen(event_id=None):
             abort(400)
 
     return render_template("form.html",
-                           nickname=nickname,
                            event=event)
 
 

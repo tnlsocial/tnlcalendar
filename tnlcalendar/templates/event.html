@@ -4,7 +4,7 @@
 <script src="{{ url_for('static', filename='moment.js') }}"></script>
 <script>moment.locale(language='nl')</script>
 <p class="position-absolute top-0 start-0"><a href="{{ url_for('index') }}">Startpagina</a></p>
-{% if authenticated %}<p class="position-absolute top-0 end-0"><a href="{{ url_for('aanpassen', event_id=event.id) }}">Aanpassen</a></p>{% endif %}
+<p class="position-absolute top-0 end-0"><a href="{{ url_for('aanpassen', event_id=event.id) }}">Aanpassen</a></p>
 <br>
 <center class="text-break"><h1><a href="{{ url_for('event', event_id=event.id) }}">{{ event.title }}</a></h1></center>
 <center class="text-break"><b>Van:</b><span id="event-start">{{ event.start_date }}</span></center>

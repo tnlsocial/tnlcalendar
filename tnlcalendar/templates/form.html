@@ -9,7 +9,7 @@
   <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <div class="mb-3">
     <label for="nickname">Nickname</label>
-    <input class="form-control" id="nickname" name="nickname" readonly type="text" value="{{ nickname }}">
+    <input class="form-control" id="nickname" name="nickname">
   </div>
 
   <div class="mb-3">
@@ -53,7 +53,7 @@
   <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}">
   <div class="mb-3">
     <label for="nickname">Nickname</label>
-    <input class="form-control" id="nickname" name="nickname" readonly type="text" value="{{ event.nickname }}">
+    <input class="form-control" id="nickname" name="nickname" value="{{ event.nickname }}">
   </div>
 
   <div class="mb-3">
